@@ -19,14 +19,22 @@ const linkStyle = {
   fontWeight: 'bold',
 };
 
-const Navigation = () => {
+const Navigation = ({ user, setUser }) => {
   return (
     <nav style={navStyle}>
-      <Link to="/dashboard" style={linkStyle}>Dashboard</Link>
-      <Link to="/new-analysis" style={linkStyle}>New Analysis</Link>
-      <Link to="/progress" style={linkStyle}>Progress</Link>
-      <Link to="/reports" style={linkStyle}>Reports</Link>
-      <Link to="/profile" style={linkStyle}>Profile</Link>
+      {user && <>
+        <Link to="/dashboard" style={linkStyle}>Dashboard</Link>
+        <Link to="/new-analysis" style={linkStyle}>New Analysis</Link>
+        <Link to="/progress" style={linkStyle}>Progress</Link>
+        <Link to="/reports" style={linkStyle}>Reports</Link>
+        <Link to="/profile" style={linkStyle}>Profile</Link>
+        <span style={{ color: '#fff', marginLeft: 16 }}>Hi, {user.username}</span>
+        <button style={{ marginLeft: 16 }} onClick={() => setUser(null)}>Logout</button>
+      </>}
+      {!user && <>
+        <Link to="/login" style={linkStyle}>Login</Link>
+        <Link to="/register" style={linkStyle}>Register</Link>
+      </>}
     </nav>
   );
 };

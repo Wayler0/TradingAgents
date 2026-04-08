@@ -1,4 +1,6 @@
 
+
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navigation from './Navigation';
@@ -10,6 +12,7 @@ import Profile from './Profile';
 import RegisterForm from './RegisterForm';
 import LoginForm from './LoginForm';
 
+function App() {
   const [user, setUser] = useState(() => {
     const u = localStorage.getItem('user');
     return u ? JSON.parse(u) : null;

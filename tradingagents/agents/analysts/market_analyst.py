@@ -75,10 +75,17 @@ Volume-Based Indicators:
 
         result = chain.invoke(state["messages"])
 
-        report = ""
+        # Support both object and dict result
+        tool_calls = getattr(result, 'tool_calls', None)
+        if tool_calls is None and isinstance(result, dict):
+            tool_calls = result.get('tool_calls', [])
+        content = getattr(result, 'content', None)
+        if content is None and isinstance(result, dict):
+            content = result.get('content', "")
 
-        if len(result.tool_calls) == 0:
-            report = result.content
+        report = ""
+        if not tool_calls:
+            report = content
 
         return {
             "messages": [result],

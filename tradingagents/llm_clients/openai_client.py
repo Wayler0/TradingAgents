@@ -1,7 +1,10 @@
 import os
+def is_mock_mode():
+    return os.environ.get("MOCK_MODE", "0").lower() in ("1", "true", "yes")
 from typing import Any, Optional
 
 from langchain_openai import ChatOpenAI
+import logging
 
 from .base_client import BaseLLMClient, normalize_content
 from .validators import validate_model
@@ -52,10 +55,12 @@ class OpenAIClient(BaseLLMClient):
         self.provider = provider.lower()
 
     def get_llm(self) -> Any:
-        """Return configured ChatOpenAI instance."""
+        """Return configured ChatOpenAI instance, or dummy if no API key."""
         llm_kwargs = {"model": self.model}
 
         # Provider-specific base URL and auth
+
+        api_key = None
         if self.provider in _PROVIDER_CONFIG:
             base_url, api_key_env = _PROVIDER_CONFIG[self.provider]
             llm_kwargs["base_url"] = base_url
@@ -77,6 +82,10 @@ class OpenAIClient(BaseLLMClient):
         # all model families. Third-party providers use Chat Completions.
         if self.provider == "openai":
             llm_kwargs["use_responses_api"] = True
+
+        # If no API key, raise an error
+        if self.provider == "openai" and not api_key:
+            raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
 
         return NormalizedChatOpenAI(**llm_kwargs)
 
